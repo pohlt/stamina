@@ -758,7 +758,15 @@ def retry(
                     name, args, kw
                 ):
                     with attempt:
-                        return wrapped(*args, **kw)
+                        res = wrapped(*args, **kw)
+                        if (
+                            retry_ctx._attempts is not None
+                            and attempt.num > 0.8 * retry_ctx._attempts
+                        ):
+                            print(
+                                f"attempts almost exhausted ({attempt.num} of {retry_ctx._attempts})"
+                            )
+                        return res
 
             return sync_inner
 
